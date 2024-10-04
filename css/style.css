@@ -1,0 +1,21 @@
+#animation_container,
+#_preload_div_,
+#video_div {
+    position: absolute;
+    margin: auto;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+#dom_overlay_container {
+    pointer-events: none;
+    overflow: hidden;
+    width: 1920px;
+    height: 1080px;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    display: block;
+}
