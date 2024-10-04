@@ -42,35 +42,42 @@ var correctAnswersCountV = 0;
 
 /*========End=======*/
 
-function init() {
+function init()
+{
   canvas = document.getElementById("canvas");
   anim_container = document.getElementById("animation_container");
   dom_overlay_container = document.getElementById("dom_overlay_container");
   var comp = AdobeAn.getComposition("82F6770C1313B34385EFC2E3BB3F32CB");
   var lib = comp.getLibrary();
   var loader = new createjs.LoadQueue(false);
-  loader.addEventListener("fileload", function (evt) {
+  loader.addEventListener("fileload", function (evt)
+  {
     handleFileLoad(evt, comp);
   });
-  loader.addEventListener("complete", function (evt) {
+  loader.addEventListener("complete", function (evt)
+  {
     handleComplete(evt, comp);
   });
   var lib = comp.getLibrary();
   loader.loadManifest(lib.properties.manifest);
 }
-function handleFileLoad(evt, comp) {
+function handleFileLoad(evt, comp)
+{
   var images = comp.getImages();
-  if (evt && evt.item.type == "image") {
+  if (evt && evt.item.type == "image")
+  {
     images[evt.item.id] = evt.result;
   }
 }
-function handleComplete(evt, comp) {
+function handleComplete(evt, comp)
+{
   //This function is always called, irrespective of the content. You can use the variable "stage" after it is created in token create_stage.
   var lib = comp.getLibrary();
   var ss = comp.getSpriteSheet();
   var queue = evt.currentTarget;
   var ssMetadata = lib.ssMetadata;
-  for (i = 0; i < ssMetadata.length; i++) {
+  for (i = 0; i < ssMetadata.length; i++)
+  {
     ss[ssMetadata[i].name] = new createjs.SpriteSheet({
       images: [queue.getResult(ssMetadata[i].name)],
       frames: ssMetadata[i].frames,
@@ -80,7 +87,8 @@ function handleComplete(evt, comp) {
 
   stage = new lib.Stage(canvas);
   //Registers the "tick" event listener.
-  fnStartAnimation = function () {
+  fnStartAnimation = function ()
+  {
     stage.addChild(exportRoot);
     stage.enableMouseOver(10);
     createjs.Touch.enable(stage);
@@ -94,14 +102,16 @@ function handleComplete(evt, comp) {
     prepareTheStage();
   };
   //Code to support hidpi screens and responsive scaling.
-  function makeResponsive(isResp, respDim, isScale, scaleType) {
+  function makeResponsive(isResp, respDim, isScale, scaleType)
+  {
     var lastW,
       lastH,
       lastS = 1;
     window.addEventListener("resize", resizeCanvas);
     resizeCanvas();
 
-    function resizeCanvas() {
+    function resizeCanvas()
+    {
       var w = lib.properties.width,
         h = lib.properties.height;
       var iw = window.innerWidth,
@@ -110,17 +120,22 @@ function handleComplete(evt, comp) {
         xRatio = iw / w,
         yRatio = ih / h,
         sRatio = 1;
-      if (isResp) {
+      if (isResp)
+      {
         if (
           (respDim == "width" && lastW == iw) ||
           (respDim == "height" && lastH == ih)
-        ) {
+        )
+        {
           sRatio = lastS;
-        } else if (!isScale) {
+        } else if (!isScale)
+        {
           if (iw < w || ih < h) sRatio = Math.min(xRatio, yRatio);
-        } else if (scaleType == 1) {
+        } else if (scaleType == 1)
+        {
           sRatio = Math.min(xRatio, yRatio);
-        } else if (scaleType == 2) {
+        } else if (scaleType == 2)
+        {
           sRatio = Math.max(xRatio, yRatio);
         }
       }
@@ -129,11 +144,11 @@ function handleComplete(evt, comp) {
       canvas.style.width =
         dom_overlay_container.style.width =
         anim_container.style.width =
-          w * sRatio + "px";
+        w * sRatio + "px";
       canvas.style.height =
         anim_container.style.height =
         dom_overlay_container.style.height =
-          h * sRatio + "px";
+        h * sRatio + "px";
       stage.scaleX = pRatio * sRatio;
       stage.scaleY = pRatio * sRatio;
       lastW = iw;
@@ -150,14 +165,16 @@ function handleComplete(evt, comp) {
   AdobeAn.compositionLoaded(lib.properties.id);
   fnStartAnimation();
 }
-function prepareTheStage() {
+function prepareTheStage()
+{
   overOut = [
     exportRoot["showAnsBtn"],
     exportRoot["retryBtn"],
     exportRoot["confirmBtn"],
   ];
 
-  for (var i = 0; i < overOut.length; i++) {
+  for (var i = 0; i < overOut.length; i++)
+  {
     l(i);
     overOut[i].cursor = "pointer";
     overOut[i].on("mouseover", over);
@@ -182,21 +199,25 @@ function prepareTheStage() {
 
   stopAllSounds();
 
-  for (var i = 1; i <= numOfAns; i++) {
+  for (var i = 1; i <= numOfAns; i++)
+  {
     exportRoot["a" + i].id = i;
     exportRoot["a" + i].placeNum = null;
 
-    if (i <= 3) {
+    if (i <= 3)
+    {
       exportRoot["p" + i].ansNum = null;
     }
   }
 
   exportRoot["confirmBtn"].addEventListener("click", confirmFN);
   exportRoot["retryBtn"].addEventListener("click", retryFN);
-  exportRoot["showAnsBtn"].addEventListener("click", function () {
+  exportRoot["showAnsBtn"].addEventListener("click", function ()
+  {
     //hideFB();
     stopAllSounds();
     exportRoot["showAnsBtn"].alpha = 0;
+    exportRoot["retryBtn"].alpha = 0;
     exportRoot["soundBtn"].alpha = 0;
     exportRoot["answers"].alpha = 1;
     exportRoot["answers"].gotoAndPlay(0);
@@ -206,15 +227,19 @@ function prepareTheStage() {
   //   exportRoot.play();
   // });
 
-  exportRoot["soundBtn"].addEventListener("click", function () {
+  exportRoot["soundBtn"].addEventListener("click", function ()
+  {
     exportRoot["soundBtn"].gotoAndStop(1);
-    if (!soundMuted) {
+    if (!soundMuted)
+    {
       quizSd.play();
-      quizSd.on("end", function () {
+      quizSd.on("end", function ()
+      {
         exportRoot["soundBtn"].gotoAndStop(0);
       });
       soundMuted = true;
-    } else {
+    } else
+    {
       stopAllSounds();
       soundMuted = false;
       exportRoot["soundBtn"].gotoAndStop(0);
@@ -224,7 +249,8 @@ function prepareTheStage() {
   hideFB();
 }
 
-function hideFB() {
+function hideFB()
+{
   exportRoot["wrongFB"].alpha = 0;
   exportRoot["wrongFB"].playV = false;
   exportRoot["rightFB"].alpha = 0;
@@ -239,19 +265,24 @@ function hideFB() {
   // exportRoot["soundBtn"].gotoAndStop(0);
 }
 
-function stopAllSounds() {
-  for (var s = 0; s < soundsArr.length; s++) {
+function stopAllSounds()
+{
+  for (var s = 0; s < soundsArr.length; s++)
+  {
     soundsArr[s].stop();
   }
 }
 
-function activateButtons() {
-  for (var i = 1; i <= numOfAns; i++) {
+function activateButtons()
+{
+  for (var i = 1; i <= numOfAns; i++)
+  {
     exportRoot["a" + i].gotoAndStop(0);
     exportRoot["a" + i].clicked = false;
     exportRoot["a" + i].placeNum = null;
 
-    if (i <= 3) {
+    if (i <= 3)
+    {
       exportRoot["p" + i].ansNum = null;
       exportRoot["p" + i].gotoAndStop(0);
     }
@@ -264,11 +295,14 @@ function activateButtons() {
   exportRoot["confirmBtn"].alpha = 0;
 }
 
-function deactivateButtons() {
-  for (var i = 1; i <= numOfAns; i++) {
+function deactivateButtons()
+{
+  for (var i = 1; i <= numOfAns; i++)
+  {
     exportRoot["a" + i].placeNum = null;
 
-    if (i <= 3) {
+    if (i <= 3)
+    {
       exportRoot["p" + i].ansNum = null;
     }
 
@@ -281,16 +315,21 @@ function deactivateButtons() {
   exportRoot["confirmBtn"].alpha = 0;
 }
 
-function chooseAnsFn(e2) {
+function chooseAnsFn(e2)
+{
   // stopAllSounds();
   clickSd.play();
   console.log(counQuz + "counQuz");
 
-  if (e2.currentTarget.placeNum == null) {
+  if (e2.currentTarget.placeNum == null)
+  {
     console.log("if");
-    if (counQuz < numOfPlaces) {
-      for (var i = 1; i <= numOfPlaces; i++) {
-        if (exportRoot["p" + i].ansNum == null) {
+    if (counQuz < numOfPlaces)
+    {
+      for (var i = 1; i <= numOfPlaces; i++)
+      {
+        if (exportRoot["p" + i].ansNum == null)
+        {
           exportRoot["p" + i].gotoAndStop(e2.currentTarget.id);
           exportRoot["p" + i].ansNum = e2.currentTarget.id;
           e2.currentTarget.placeNum = i;
@@ -298,7 +337,8 @@ function chooseAnsFn(e2) {
           break;
         }
       }
-    } else {
+    } else
+    {
       console.log("else ");
       e2.currentTarget.placeNum = numOfPlaces;
       prevAns = exportRoot["a" + exportRoot["p" + numOfPlaces].ansNum];
@@ -315,7 +355,8 @@ function chooseAnsFn(e2) {
     e2.currentTarget.removeEventListener("mouseover", over2);
     e2.currentTarget.removeEventListener("mouseout", out);
     e2.currentTarget.clicked = true;
-  } else if (e2.currentTarget.placeNum !== null) {
+  } else if (e2.currentTarget.placeNum !== null)
+  {
     counQuz--;
     console.log("else if");
 
@@ -328,9 +369,11 @@ function chooseAnsFn(e2) {
     e2.currentTarget.placeNum = null;
     e2.currentTarget.clicked = false;
   }
-  if (counQuz == ansTrue) {
+  if (counQuz == ansTrue)
+  {
     exportRoot["confirmBtn"].alpha = 1;
-  } else {
+  } else
+  {
     exportRoot["confirmBtn"].alpha = 0;
   }
 }
@@ -384,26 +427,31 @@ function chooseAnsFn(e2) {
 //   }
 // }
 
-function confirmFN() {
+function confirmFN()
+{
   stopAllSounds();
   clickSd.play();
   deactivateButtons();
 
-  for (var i = 1; i <= numOfAns; i++) {
-    if (i <= ansTrue && exportRoot["a" + i].clicked) {
+  for (var i = 1; i <= numOfAns; i++)
+  {
+    if (i <= ansTrue && exportRoot["a" + i].clicked)
+    {
       score++;
     }
   }
 
   console.log(score);
-  if (score == ansTrue) {
+  if (score == ansTrue)
+  {
     /*========End=======*/
     exportRoot["rightFB"].playV = true;
     exportRoot["rightFB"].alpha = 1;
     exportRoot["rightFB"].gotoAndPlay(0);
     exportRoot["confirmBtn"].alpha = 0;
     exportRoot["soundBtn"].alpha = 0;
-  } else {
+  } else
+  {
     exportRoot["wrongFB"].playV = true;
     exportRoot["wrongFB"].alpha = 1;
     exportRoot["wrongFB"].gotoAndPlay(0);
@@ -412,8 +460,10 @@ function confirmFN() {
     deactivateButtons();
   }
 }
-function retryFN() {
+function retryFN()
+{
   exportRoot["soundBtn"].alpha = 1;
+  exportRoot["soundBtn"].gotoAndStop(0);
   stopAllSounds();
   clickSd.play();
   hideFB();
@@ -424,18 +474,22 @@ function retryFN() {
   activateButtons();
   retryV = false;
 }
-function over(e) {
+function over(e)
+{
   e.currentTarget.gotoAndStop(1);
 }
-function over2(e) {
+function over2(e)
+{
   e.currentTarget.gotoAndStop(2);
 }
 
-function out(e) {
+function out(e)
+{
   e.currentTarget.gotoAndStop(0);
 }
 
-function showBtns() {
+function showBtns()
+{
   exportRoot["showAnsBtn"].alpha = 1;
   exportRoot["retryBtn"].alpha = 1;
 }
